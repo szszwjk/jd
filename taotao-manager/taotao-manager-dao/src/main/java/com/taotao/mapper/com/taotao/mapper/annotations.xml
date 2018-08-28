@@ -1,0 +1,5 @@
+<root>
+    <item name='com.taotao.mapper.TbContentMapper'>
+        <annotation name='java.lang.Deprecated'/>
+    </item>
+</root>

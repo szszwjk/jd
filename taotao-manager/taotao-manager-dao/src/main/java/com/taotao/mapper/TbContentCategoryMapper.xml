@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.taotao.mapper.TbContentCategoryMapper" >
+ 	<select id="getTbContentCategoryByParentId" parameterType="long" resultType="com.taotao.pojo.TbContentCategory">
+ 		SELECT * FROM tbcontentcategory WHERE parentId=#{id};
+ 	</select>
+ 	<insert id="insertTbContentCategory" parameterType="com.taotao.pojo.TbContentCategory">
+ 		<selectKey keyProperty="id" resultType="long" order="AFTER">
+ 			SELECT LAST_INSERT_ID()
+ 		</selectKey>
+ 		INSERT INTO tbcontentcategory(id,parentId,name,status,sortOrder,isParent,created,updated) 
+ 		VALUES(#{id},#{parentId},#{name},#{status},#{sortOrder},#{isParent},#{created},#{updated})
+ 	</insert>
+ 	<select id="selectByPrimaryKey" parameterType="long" resultType="com.taotao.pojo.TbContentCategory">
+ 		SELECT * FROM tbcontentcategory WHERE id=#{id};
+ 	</select>
+ 	<update id="updateByPrimaryKey" parameterType="com.taotao.pojo.TbContentCategory">
+ 		UPDATE tbcontentcategory SET isParent=#{isParent} WHERE id=#{id}
+ 	</update>
+ 	
+</mapper>

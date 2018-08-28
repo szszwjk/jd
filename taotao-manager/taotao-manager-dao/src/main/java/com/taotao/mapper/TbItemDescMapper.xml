@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.taotao.mapper.TbItemDescMapper" >
+	<select id="addItemDesc" parameterType="com.taotao.pojo.TbItemDesc">
+		INSERT INTO tbitemdesc(itemId,itemDesc,created,updated) VALUE(#{itemId},#{itemDesc},#{created},#{updated})
+	</select>
+</mapper>

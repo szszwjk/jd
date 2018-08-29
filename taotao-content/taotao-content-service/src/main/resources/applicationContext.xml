@@ -44,8 +44,48 @@
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="com.taotao.mapper" />
 	</bean>
-	
-	
+	<!--单机版redis-->
+	<!--
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="host" value="192.168.25.153"/>
+		<constructor-arg name="port" value="6379"/>
+	</bean>
+	<bean id="jedisClientPool" class="com.taotao.jedis.JedisClientPool">
+
+	</bean>-->
+	<!--集群版redis-->
+	<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+		<constructor-arg>
+			<set>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"></constructor-arg>
+					<constructor-arg name="port" value="7001"></constructor-arg>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"></constructor-arg>
+					<constructor-arg name="port" value="7002"></constructor-arg>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"></constructor-arg>
+					<constructor-arg name="port" value="7003"></constructor-arg>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"></constructor-arg>
+					<constructor-arg name="port" value="7004"></constructor-arg>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"></constructor-arg>
+					<constructor-arg name="port" value="7005"></constructor-arg>
+				</bean>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg name="host" value="192.168.25.153"></constructor-arg>
+					<constructor-arg name="port" value="7006"></constructor-arg>
+				</bean>
+			</set>
+		</constructor-arg>
+	</bean>
+	<bean id="jedisClientCluster" class="com.taotao.jedis.JedisClientCluster"/>
+
 	<!-- 事务管理器 -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -80,6 +120,6 @@
 	<!-- 用dubbo协议在20880端口暴露服务 -->
 	<dubbo:protocol name="dubbo" port="20881" />
 	<!-- 声明需要暴露的服务接口 -->
-	 <dubbo:service interface="com.taotao.content.service.ContentCategoryService" ref="contentCategoryServiceImpl" />
-	<dubbo:service interface="com.taotao.content.service.ContentService" ref="contentServiceImpl" />
+	 <dubbo:service interface="com.taotao.content.service.ContentCategoryService" ref="contentCategoryServiceImpl" timeout="30000"/>
+	<dubbo:service interface="com.taotao.content.service.ContentService" ref="contentServiceImpl" timeout="30000"/>
 </beans>

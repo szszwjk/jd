@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.github.pagehelper.PageInfo;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
@@ -17,9 +20,19 @@ import com.taotao.pojo.TbItem;
 import com.taotao.pojo.TbItemDesc;
 import com.taotao.service.ItemService;
 import com.taotao.utils.IDUtils;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 @Service
 public class ItemServiceImpl implements ItemService {
 
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Autowired
+	private ActiveMQTopic activeMQTopic;
 	@Autowired
 	private TbItemMapper tbItemMapper;
 	@Autowired
@@ -49,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 	@Override
 	public TaotaoResult addItem(TbItem item, String desc) {
-		long itemId = IDUtils.genItemId();
+		final long itemId = IDUtils.genItemId();
 		// 2、补全TbItem对象的属性
 		item.setId(itemId);
 		//商品状态，1-正常，2-下架，3-删除
@@ -69,7 +82,21 @@ public class ItemServiceImpl implements ItemService {
 		// 6、向商品描述表插入数据
 		tbItemDescMapper.addItemDesc(itemDesc);
 		// 7、TaotaoResult.ok()
-		return TaotaoResult.ok();
+		/*
+		* 在这里发布消息 更新缓存
+		* 1 用点对点还是 订阅预发布
+		* 2 发送过去的数据是是什么类型 格式是什么
+		* 只发送id 发送json
+		*
+		* */
+		jmsTemplate.send(activeMQTopic, new MessageCreator() {
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				TextMessage textMessage = session.createTextMessage(itemId + "");
+				return textMessage;
+			}
+		});
+		return TaotaoResult.ok ();
 		
 		
 		

@@ -10,6 +10,7 @@ var TT = TAOTAO = {
             type : "GET",
             success : function(data){
                 if(data.status == 200){
+                    console.log(data)
                     var userName = data.data.userName;
                     var html = userName + "，欢迎来到淘淘！<a href=\"http://www.taotao.com/user/logout.html\" class=\"link-logout\">[退出]</a>";
                     $("#loginbar").html(html);

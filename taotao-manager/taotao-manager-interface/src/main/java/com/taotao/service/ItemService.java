@@ -15,4 +15,5 @@ public interface ItemService {
 	public TaotaoResult instockItem(List<Long> idList);
 	public TaotaoResult reshelfItem(List<Long> idList);
 	public TbItemDesc getItemDescById(long itemId);
+	public String getItemParamByItemId(long itemId);
 }

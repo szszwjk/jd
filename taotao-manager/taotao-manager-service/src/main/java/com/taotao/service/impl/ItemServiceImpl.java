@@ -1,12 +1,18 @@
 package com.taotao.service.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.taotao.common.pojo.EasyUIDataGridResult;
+import com.taotao.common.pojo.TaotaoResult;
 import com.taotao.jedis.JedisClient;
+import com.taotao.mapper.TbItemDescMapper;
+import com.taotao.mapper.TbItemMapper;
 import com.taotao.mapper.TbItemParamItemMapper;
+import com.taotao.pojo.TbItem;
+import com.taotao.pojo.TbItemDesc;
 import com.taotao.pojo.TbItemParamItem;
+import com.taotao.service.ItemService;
+import com.taotao.utils.IDUtils;
 import com.taotao.utils.JsonUtils;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.commons.lang3.StringUtils;
@@ -16,21 +22,13 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
-import com.github.pagehelper.PageHelper;
-
-import com.taotao.common.pojo.EasyUIDataGridResult;
-import com.taotao.common.pojo.TaotaoResult;
-import com.taotao.mapper.TbItemDescMapper;
-import com.taotao.mapper.TbItemMapper;
-import com.taotao.pojo.TbItem;
-import com.taotao.pojo.TbItemDesc;
-import com.taotao.service.ItemService;
-import com.taotao.utils.IDUtils;
-
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -191,6 +189,31 @@ public class ItemServiceImpl implements ItemService {
 			e.printStackTrace();
 		}
 		return itemDesc;
+	}
+
+	@Override
+	public String getItemParamByItemId(long itemId) {
+		TbItemParamItem tbItemParamItem = tbItemParamItemMapper.getItemParamItemId(itemId);
+		String paramData = tbItemParamItem.getParamData();
+		List<Map> jsonList = JsonUtils.jsonToList(paramData, Map.class);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<table cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" border=\"0\" class=\"Ptable\">\n");
+		sb.append("    <tbody>\n");
+		for(Map m1:jsonList) {
+			sb.append("        <tr>\n");
+			sb.append("            <th class=\"tdTitle\" colspan=\"2\">"+m1.get("group")+"</th>\n");
+			sb.append("        </tr>\n");
+			List<Map> list2 = (List<Map>) m1.get("params");
+			for(Map m2:list2) {
+				sb.append("        <tr>\n");
+				sb.append("            <td class=\"tdTitle\">"+m2.get("k")+"</td>\n");
+				sb.append("            <td>"+m2.get("v")+"</td>\n");
+				sb.append("        </tr>\n");
+			}
+		}
+		sb.append("    </tbody>\n");
+		sb.append("</table>");
+		return sb.toString();
 	}
 
 }

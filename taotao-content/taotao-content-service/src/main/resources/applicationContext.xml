@@ -86,6 +86,9 @@
 	</bean>
 	<bean id="jedisClientCluster" class="com.taotao.jedis.JedisClientCluster"/>-->
 
+
+
+
 	<!-- 事务管理器 -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

@@ -13,6 +13,11 @@
     <artifactId>taotao-item-web</artifactId>
     <packaging>war</packaging>
     <dependencies>
+        <!--actmq-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.taotao</groupId>
@@ -100,6 +105,15 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
+        <!--freemarker-->
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+
+
+
     </dependencies>
     <!-- 配置tomcat插件 -->
     <build>

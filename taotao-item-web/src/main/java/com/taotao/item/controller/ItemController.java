@@ -39,4 +39,10 @@ public class ItemController {
 
 
     }
+    @RequestMapping("/item/param/{itemId}")
+    @ResponseBody
+    public String showItemParam(@PathVariable Long itemId, Model model) {
+        String string = itemService.getItemParamByItemId(itemId);
+        return string;
+    }
 }

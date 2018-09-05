@@ -33,6 +33,12 @@
             <artifactId>taotao-content-interface</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.taotao</groupId>
+            <artifactId>taotao-sso-interface</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
 
         <!-- dubbo相关jar包 -->
         <dependency>

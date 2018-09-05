@@ -1,8 +1,11 @@
 package com.taotao.portal.controller;
 
+import com.taotao.common.pojo.TaotaoResult;
 import com.taotao.content.service.ContentService;
 import com.taotao.pojo.TbContent;
 import com.taotao.portal.pojo.Ad1Node;
+import com.taotao.sso.service.UserService;
+import com.taotao.utils.CookieUtils;
 import com.taotao.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,13 +13,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class IndexController {
 	@Autowired
+	private UserService userService;
+	@Autowired
 	private ContentService contentService;
+	@Value("${COOKIE_TOKEN_KEY}")
+	private String COOKIE_TOKEN_KEY;
 	@Value("${AD1_CID}")
 	private Long AD1_CID;
 	@Value("${AD1_HEIGHT}")
@@ -28,7 +36,7 @@ public class IndexController {
 	@Value("${AD1_WIDTH_B}")
 	private Integer AD1_WIDTH_B;
 	@RequestMapping("/index")
-	public String showIndex(Model model){//取轮播图的内容信息
+	public String showIndex(Model model, HttpServletRequest request){//取轮播图的内容信息
 	List<TbContent> contentList = contentService.getContent(AD1_CID);
 	//转换成Ad1NodeList
 	List<Ad1Node> ad1List = new ArrayList<>();
@@ -47,7 +55,10 @@ public class IndexController {
 	}
 	//把数据传递给页面。
 		model.addAttribute("ad1", JsonUtils.objectToJson(ad1List));
-
+		String token = CookieUtils.getCookieValue(request, COOKIE_TOKEN_KEY);
+		TaotaoResult result = userService.getUserByToken(token);
+		model.addAttribute("token",token);
+		model.addAttribute("result",result.getData());
 		return "index";
 	}
 }

@@ -4,8 +4,11 @@ import com.taotao.common.pojo.TaotaoResult;
 import com.taotao.pojo.TbUser;
 import com.taotao.sso.service.UserService;
 import com.taotao.utils.CookieUtils;
+import com.taotao.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,8 @@ public class UserController {
     private UserService userService;
     @Value("${COOKIE_TOKEN_KEY}")
     private String COOKIE_TOKEN_KEY;
+    @Value("${SESSION_EXPIRE}")
+    private int SESSION_EXPIRE;
 
     @RequestMapping("/user/check/{param}/{type}")
     @ResponseBody
@@ -49,21 +54,28 @@ public class UserController {
         // 3、从返回结果中取token，写入cookie。Cookie要跨域。
 
         String token = result.getData().toString();
-        CookieUtils.setCookie(request, response, COOKIE_TOKEN_KEY, token);
+        CookieUtils.setCookie(request, response, COOKIE_TOKEN_KEY, token,SESSION_EXPIRE);
         // 4、响应数据。Json数据。TaotaoResult，其中包含Token。
         return result;
 
     }
-    @RequestMapping("/user/token/{token}")
+    @RequestMapping(value = "/user/token/{token}",produces = MediaType.APPLICATION_JSON_VALUE+";charset=utf-8")
     @ResponseBody
-    public TaotaoResult getUserByToken(@PathVariable String token) {
+    public String getUserByToken(@PathVariable String token,String callback) {
         TaotaoResult result = userService.getUserByToken(token);
-        return result;
+        if(StringUtils.isNotBlank(callback))
+        {
+            String strResult = callback + "(" + JsonUtils.objectToJson(result) + ")";
+            return strResult;
+        }
+        return JsonUtils.objectToJson(result);
     }
     @RequestMapping("/user/logout/{token}")
-    @ResponseBody
-    public TaotaoResult logoutByToken(@PathVariable String token) {
+
+    public String logoutByToken(@PathVariable String token,HttpServletRequest request,HttpServletResponse response) {
         TaotaoResult result = userService.logoutByToken(token);
-        return result;
+        CookieUtils.deleteCookie(request,response,COOKIE_TOKEN_KEY);
+
+        return "login";
     }
 }
